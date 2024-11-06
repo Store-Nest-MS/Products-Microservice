@@ -1,19 +1,21 @@
-import { InternalServerErrorException } from '@nestjs/common';
 import * as dotenv from 'dotenv';
+
 import { z } from 'zod';
 dotenv.config();
 
 const EnvSchema = z.object({
-  PORT: z.coerce.number().int().positive(),
+  PORT: z.coerce.number().positive(),
+  DATABASE_URL: z.string().url(),
 });
 
-type Env = z.infer<typeof EnvSchema>;
-
-const currentEnv: Env = {
-  PORT: process.env.PORT as unknown as number,
-};
+// type Env = z.infer<typeof EnvSchema>;
 
 // Validate the environment
-EnvSchema.parse(currentEnv);
+const { success, data, error } = EnvSchema.safeParse(process.env);
+// Handle errors
+if (error) {
+  console.log(error.errors);
+  throw new Error(`Env load error `);
+}
 
-export const env = { ...currentEnv };
+export const env = { ...data };

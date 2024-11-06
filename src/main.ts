@@ -1,14 +1,16 @@
-import { env } from './config/env';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { setGlobalPipes } from './lib/setGlobalPipes';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { env } from '@config/env';
+import { setGlobalPipes } from '@lib/setGlobalPipes';
+import { AppModule } from '@app/app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    { transport: Transport.TCP, options: { port: env.PORT } },
+  );
 
   setGlobalPipes(app);
-  await app.listen(env.PORT, () => {
-    console.log(`App running on port ${env.PORT}`);
-  });
+  await app.listen();
 }
 bootstrap();
