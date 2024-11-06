@@ -10,6 +10,8 @@ import {
   products_omit_fileds,
 } from 'src/common/queries/notDeleted';
 import { Prisma } from '@prisma/client';
+import { readFile } from 'fs/promises';
+import path from 'path';
 
 @Injectable()
 export class ProductsService {
@@ -85,6 +87,18 @@ export class ProductsService {
       data: { isDeleted: true },
       where: { id },
       omit: products_omit_fileds,
+    });
+  }
+
+  async seed() {
+    // Check if alredy exist data in the prorducts
+    //  In case it doesn't exist
+    // Read the json file and insert the data
+    const data_path = path.join(process.cwd(), 'src/mock/products.mock.json');
+    const string_data = await readFile(data_path, { encoding: 'utf-8' });
+    const products = (await JSON.parse(string_data).products) || [];
+    return this.prisma.product.createMany({
+      data: products.map(({ name, price }) => ({ name, price })),
     });
   }
 }

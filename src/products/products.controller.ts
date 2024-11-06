@@ -937,20 +937,7 @@ export class ProductsController {
   }
   @Post('seed')
   async seed() {
-    try {
-      // Read the json data
-      const d = [];
-      // Validate the data  with a DTO
-
-      //Call the service seed method
-      return await this.productsService.createMany(
-        h as unknown as ProductsArrayDto,
-      );
-    } catch (error) {
-      console.log(error);
-
-      console.log('Seeding error');
-    }
+    return this.productsService.seed();
   }
 
   @Get()

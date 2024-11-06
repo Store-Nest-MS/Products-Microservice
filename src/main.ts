@@ -5,12 +5,9 @@ import { setGlobalPipes } from '@lib/setGlobalPipes';
 import { AppModule } from '@app/app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    { transport: Transport.TCP, options: { port: env.PORT } },
-  );
+  const app = await NestFactory.create(AppModule);
 
   setGlobalPipes(app);
-  await app.listen();
+  await app.listen(env.PORT);
 }
 bootstrap();
