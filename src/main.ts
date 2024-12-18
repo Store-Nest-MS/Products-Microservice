@@ -6,17 +6,19 @@ import { AppModule } from '@app/app.module';
 import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
-  const loger = new Logger('PRODUCTS_MS');
+  const logger = new Logger('PRODUCTS_MS');
+
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
-      transport: Transport.TCP,
-      options: { port: env.PORT, host: 'localhost' },
+      transport: Transport.NATS,
+      options: { servers: env.NATS_SERVERS },
     },
   );
 
   setGlobalPipes(app);
   await app.listen();
-  loger.log('PRODUCTS-MS RUNNING ON PORT ' + env.PORT);
+  logger.log('PRODUCTS-MS RUNNING ');
+  logger.log('NATS SERVERS ' + JSON.stringify(env.NATS_SERVERS));
 }
 bootstrap();
