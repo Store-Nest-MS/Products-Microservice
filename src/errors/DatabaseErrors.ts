@@ -22,10 +22,6 @@ class DatabaseErrorFactory {
   //  A private function that handles all the Prisma errors
   private handlePrismaErrors(): string {
     const error = this.errorInstance;
-    console.log('Prisma Error ');
-    console.log(error);
-    console.log('================================');
-    console.log(error);
 
     // Recheckig what tyep of primsa error it is, return it into the isPrimsaError function
     if (error instanceof Prisma.PrismaClientKnownRequestError) {

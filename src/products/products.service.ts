@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prima.service';
@@ -12,6 +12,7 @@ import {
 import { Prisma } from '@prisma/client';
 import { readFile } from 'fs/promises';
 import path from 'path';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProductsService {
@@ -62,7 +63,7 @@ export class ProductsService {
     const match = await this.prisma.product.findUnique({ where: { id } });
     if (match) return match;
 
-    throw new NotFoundException(`Product with id ${id} not found`);
+    throw new RpcException(`Product with id ${id} not found`);
   }
 
   async findOneMatch(filter: Partial<Prisma.ProductWhereInput>) {
@@ -72,7 +73,7 @@ export class ProductsService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
-    const product = await this.findOne(id);
+    await this.findOne(id);
 
     return this.prisma.product.update({
       data: updateProductDto,
@@ -100,5 +101,19 @@ export class ProductsService {
     return this.prisma.product.createMany({
       data: products.map(({ name, price }) => ({ name, price })),
     });
+  }
+
+  async validate_products_id(ids: number[]) {
+    const products = await this.prisma.product.findMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+
+    if (products.length === 0) {
+      throw new RpcException('No products found');
+    }
+
+    return products;
   }
 }

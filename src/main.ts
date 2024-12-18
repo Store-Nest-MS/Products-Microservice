@@ -11,7 +11,7 @@ async function bootstrap() {
     AppModule,
     {
       transport: Transport.TCP,
-      options: { port: env.PORT },
+      options: { port: env.PORT, host: 'localhost' },
     },
   );
 
