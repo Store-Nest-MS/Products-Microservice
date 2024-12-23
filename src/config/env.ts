@@ -4,7 +4,7 @@ import { z } from 'zod';
 dotenv.config();
 
 const EnvSchema = z.object({
-  DATABASE_URL: z.string().url(),
+  PRODUCTS_MS_DATABASE_URL: z.string().url(),
   NATS_SERVERS: z.array(z.string()).min(1),
 });
 
